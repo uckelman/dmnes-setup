@@ -129,7 +129,7 @@ chown -R editor.editor /home/editor
 setsebool -P httpd_read_user_content 1
 setsebool -P httpd_can_network_connect 1
 setsebool -P httpd_execmem 1
-semanage fcontext -a -t httpd_user_rw_content_t '/home/editor/users(/.*)?'
+semanage fcontext -a -t httpd_user_rw_content_t '/home/editor/dmnes-editor/users(/.*)?'
 etckeeper commit 'SELinux adjustments for the editor.'
 
 # cleanup
