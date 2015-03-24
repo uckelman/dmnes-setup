@@ -27,9 +27,8 @@ def area_for_place(vnf):
   if hasattr(vnf, 'place'):
     if hasattr(vnf.place, 'country'):
       return str(vnf.place.country)
-    if hasattr(vnf.place, 'region'):
+    elif hasattr(vnf.place, 'region'):
       return str(vnf.place.region)
-
   return 'Unspecified'
 
 
