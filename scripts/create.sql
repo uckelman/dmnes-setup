@@ -10,6 +10,9 @@ CREATE TABLE cnf(
   def TEXT
 );
 
+CREATE VIRTUAL TABLE cnf_fts USING fts4(content='cnf', id, nym, etym, usg, def);
+INSERT INTO cnf_fts(cnf_fts) VALUES('rebuild');
+
 CREATE TABLE cnf_notes(
   ref INTEGER NOT NULL REFERENCES cnf(id),
   note TEXT
@@ -25,6 +28,7 @@ CREATE TABLE vnf(
   dim INTEGER CHECK(dim == 0 OR dim == 1) NOT NULL,
   lang TEXT CHECK(LENGTH(lang) > 0) NOT NULL,
   area TEXT NOT NULL,
+  area_skey TEXT NOT NULL,
   place TEXT,
   date TEXT CHECK(LENGTH(date) > 0) NOT NULL,
   bib_id INTEGER NOT NULL REFERENCES bib(id),

@@ -32,14 +32,25 @@ def area_for_place(vnf):
   return 'Unspecified'
 
 
+class SortKeyDict(dict):
+  def __missing__(self, key):
+    return key
+
+
+AREA_SKEY = SortKeyDict({ 'The Netherlands': 'Netherlands, The' })
+
+
 def make_vnf_row(dbh, vnf, spanned_vnf):
+  area = area_for_place(vnf)
+
   return (
     str(vnf.name),
     str(vnf.gen),
     str(vnf.case),
     int(vnf.dim),
     str(vnf.lang),
-    area_for_place(vnf),
+    area,
+    AREA_SKEY[area],
     str_inner(spanned_vnf.place) if hasattr(vnf, 'place') else None,
     str(vnf.date),
     id_for_bib_key(dbh, str(vnf.bibl.key)),
@@ -50,7 +61,7 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
 def insert_vnf(dbh, vnf, spanned_vnf):
   vnf_r = make_vnf_row(dbh, vnf, spanned_vnf)
   dbh.execute(
-    "INSERT INTO vnf (name, gen, 'case', dim, lang, area, place, date, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO vnf (name, gen, 'case', dim, lang, area, area_skey, place, date, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
     vnf_r
   )
   return dbh.lastrowid
