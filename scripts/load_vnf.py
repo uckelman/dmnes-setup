@@ -39,16 +39,31 @@ class SortKeyDict(dict):
 
 AREA_SKEY = SortKeyDict({ 'The Netherlands': 'Netherlands, The' })
 
+LANG_SKEY = SortKeyDict({
+  'Middle English'       : 'English 0',
+  'English'              : 'English 1',
+  'Middle Norwegian'     : 'Norwegian 0',
+  'Norwegian'            : 'Norwegian 1',
+  'Old Swedish'          : 'Swedish 0',
+  'Swedish'              : 'Swedish 1',
+  'Old French'           : 'French 0',
+  'Middle French'        : 'French 1',
+  'French'               : 'French 2',
+  'Early New High German': 'German 0',
+  'German'               : 'German 1'
+})
 
 def make_vnf_row(dbh, vnf, spanned_vnf):
   area = area_for_place(vnf)
+  lang = str(vnf.lang)
 
   return (
     str(vnf.name),
     str(vnf.gen),
     str(vnf.case),
     int(vnf.dim),
-    str(vnf.lang),
+    lang,
+    LANG_SKEY[lang],
     area,
     AREA_SKEY[area],
     str_inner(spanned_vnf.place) if hasattr(vnf, 'place') else None,
@@ -61,7 +76,7 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
 def insert_vnf(dbh, vnf, spanned_vnf):
   vnf_r = make_vnf_row(dbh, vnf, spanned_vnf)
   dbh.execute(
-    "INSERT INTO vnf (name, gen, 'case', dim, lang, area, area_skey, place, date, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO vnf (name, gen, 'case', dim, lang, lang_skey, area, area_skey, place, date, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
     vnf_r
   )
   return dbh.lastrowid

@@ -27,6 +27,7 @@ CREATE TABLE vnf(
   "case" TEXT CHECK("case" IN ('n/a', 'abl', 'acc', 'dat', 'gen', 'nom', 'obl', 'unc')) NOT NULL,
   dim INTEGER CHECK(dim == 0 OR dim == 1) NOT NULL,
   lang TEXT CHECK(LENGTH(lang) > 0) NOT NULL,
+  lang_skey CHECK(LENGTH(lang) > 0) NOT NULL,
   area TEXT NOT NULL,
   area_skey TEXT NOT NULL,
   place TEXT,
