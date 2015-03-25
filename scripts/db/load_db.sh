@@ -1,12 +1,13 @@
 #!/usr/bin/bash -ex
 
+HERE=$(dirname $0)
 DMNES=$1
+DB=${2:-dmnes.sqlite}
 
-rm -f dmnes.sqlite
-sqlite3 dmnes.sqlite <create.sql
+sqlite3 $DB <$HERE/create.sql
 
-find $DMNES/bib -type f -name *.xml -print0 | xargs -0 ./load_bib.py dmnes.sqlite span.xsl
+find $DMNES/bib -type f -name *.xml -print0 | xargs -0 $HERE/load_bib.py $DB $HERE/span.xsl
 
-find $DMNES/CNFs -type f -name *.xml -print0 | xargs -0 ./load_cnf.py dmnes.sqlite $DMNES/schemata/cnf.xsd span.xsl
+find $DMNES/CNFs -type f -name *.xml -print0 | xargs -0 $HERE/load_cnf.py $DB $DMNES/schemata/cnf.xsd $HERE/span.xsl
 
-find $DMNES/VNFs -type f -name *.xml -print0 | xargs -0 ./load_vnf.py dmnes.sqlite $DMNES/schemata/vnf.xsd span.xsl
+find $DMNES/VNFs -type f -name *.xml -print0 | xargs -0 $HERE/load_vnf.py $DB $DMNES/schemata/vnf.xsd $HERE/span.xsl
