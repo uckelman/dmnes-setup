@@ -3,10 +3,19 @@
 # crontab line:
 # 0 6 * * *    $HOME/dmnes-setup/scripts/db/update_db.cron
 
-cd $HOME/dmnes
+STALE=
+
+# update the git repo if necessary
+pushd $HOME/dmnes
 git fetch -f
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
   git merge
+  STALE=1
+fi
+popd
+
+# rebuild the database if it is stale or missing
+if [ "$STALE" -o ! -e $HOME/dmnes-viewer/dmnes.sqlite ]; then
   $HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
   mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
   touch $HOME/dmnes-viewer/viewer.wsgi
