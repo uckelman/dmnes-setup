@@ -1,0 +1,5 @@
+#!/usr/bin/bash -ex
+
+$HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
+mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
+touch $HOME/dmnes-viewer/viewer.wsgi
