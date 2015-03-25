@@ -4,6 +4,7 @@ HERE=$(dirname $0)
 DMNES=$1
 DB=${2:-dmnes.sqlite}
 
+rm -f $DB
 sqlite3 $DB <$HERE/create.sql
 
 find $DMNES/bib -type f -name *.xml -print0 | xargs -0 $HERE/load_bib.py $DB $HERE/span.xsl
