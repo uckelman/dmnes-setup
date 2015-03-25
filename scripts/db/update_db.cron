@@ -1,5 +1,8 @@
 #!/usr/bin/bash -ex
 
+# crontab line:
+# 0 6 * * *    $HOME/dmnes-setup/scripts/db/update_db.cron
+
 $HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
 mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
 touch $HOME/dmnes-viewer/viewer.wsgi
