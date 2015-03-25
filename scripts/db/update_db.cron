@@ -3,9 +3,11 @@
 # crontab line:
 # 0 6 * * *    $HOME/dmnes-setup/scripts/db/update_db.cron
 
-pushd $HOME/dmnes
-git pull -f
-popd
-$HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
-mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
-touch $HOME/dmnes-viewer/viewer.wsgi
+cd $HOME/dmnes
+git fetch -f
+if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ];
+  git merge
+  $HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
+  mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
+  touch $HOME/dmnes-viewer/viewer.wsgi
+fi
