@@ -1,5 +1,7 @@
 import lxml.etree
 import lxml.objectify
+import os
+import os.path
 import sqlite3
 import sys
 
@@ -55,14 +57,17 @@ def insert_notes(dbh, table, ref, obj):
     )
 
 
-def xml_to_db(parser, trans, process, dbpath, xmlpaths):
+def xml_to_db(parser, trans, process, dbpath, xmlpath):
   # connect to the database
   with sqlite3.connect(dbpath) as db:
     dbh = make_db_handle(db)
 
     # process each XML file
-    for filename in xmlpaths:
-      try:
-        process(parser, trans, dbh, filename)
-      except (lxml.etree.XMLSyntaxError, sqlite3.IntegrityError) as e:
-        print(filename, e, file=sys.stderr)
+    for root, _, files in os.walk(xmlpath):
+      for f in files:
+        if os.path.splitext(f)[1] == '.xml':
+          fpath = os.path.join(root, f)
+          try:
+            process(parser, trans, dbh, fpath)
+          except (lxml.etree.XMLSyntaxError, sqlite3.IntegrityError) as e:
+            print(fpath, e, file=sys.stderr)

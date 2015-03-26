@@ -32,7 +32,7 @@ def process_bib(parser, trans, dbh, filename):
 def main():
   parser = make_parser()
   trans = make_xslt(sys.argv[2])
-  xml_to_db(parser, trans, process_bib, sys.argv[1], sys.argv[3:])
+  xml_to_db(parser, trans, process_bib, sys.argv[1], sys.argv[3])
 
 
 if __name__ == '__main__':

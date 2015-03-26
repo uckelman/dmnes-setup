@@ -7,8 +7,8 @@ DB=${2:-dmnes.sqlite}
 rm -f $DB
 sqlite3 $DB <$HERE/create.sql
 
-find $DMNES/bib -type f -name *.xml -print0 | xargs -0 $HERE/load_bib.py $DB $HERE/span.xsl
+$HERE/load_bib.py $DB $HERE/span.xsl $DMNES/bib
 
-find $DMNES/CNFs -type f -name *.xml -print0 | xargs -0 $HERE/load_cnf.py $DB $DMNES/schemata/cnf.xsd $HERE/span.xsl
+$HERE/load_cnf.py $DB $DMNES/schemata/cnf.xsd $HERE/span.xsl $DMNES/CNFs
 
-find $DMNES/VNFs -type f -name *.xml -print0 | xargs -0 $HERE/load_vnf.py $DB $DMNES/schemata/vnf.xsd $HERE/span.xsl
+$HERE/load_vnf.py $DB $DMNES/schemata/vnf.xsd $HERE/span.xsl $DMNES/VNFs

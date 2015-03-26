@@ -34,7 +34,7 @@ def process_cnf(parser, trans, dbh, filename):
 def main():
   parser = make_validating_parser(sys.argv[2])
   trans = make_xslt(sys.argv[3])
-  xml_to_db(parser, trans, process_cnf, sys.argv[1], sys.argv[4:])
+  xml_to_db(parser, trans, process_cnf, sys.argv[1], sys.argv[4])
 
 
 if __name__ == '__main__':
