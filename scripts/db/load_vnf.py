@@ -90,7 +90,7 @@ def process_vnf(parser, trans, dbh, filename):
   vnf_id = insert_vnf(dbh, vnf, spanned_vnf)
   insert_vnf_nyms(dbh, vnf_id, vnf)
   insert_notes(dbh, "vnf_notes", vnf_id, spanned_vnf)
-  insert_authors(dbh, "vnf_authors", vnf_id, filename)
+#  insert_authors(dbh, "vnf_authors", vnf_id, filename)
 
 
 def main():
