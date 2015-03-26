@@ -29,6 +29,7 @@ def process_cnf(parser, trans, dbh, filename):
   spanned_cnf = trans(cnf).getroot()
   cnf_id = insert_cnf(dbh, spanned_cnf)
   insert_notes(dbh, "cnf_notes", cnf_id, spanned_cnf)
+  insert_authors(dbh, "cnf_authors", cnf_id, filename)
 
 
 def main():

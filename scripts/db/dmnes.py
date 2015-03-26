@@ -3,13 +3,28 @@ import lxml.objectify
 import os
 import os.path
 import sqlite3
+import subprocess
 import sys
+
+
+class RemapDict(dict):
+  def __missing__(self, key):
+    return key
 
 
 def make_db_handle(db):
   dbh = db.cursor()
   dbh.execute("PRAGMA foreign_keys = ON")
   return dbh
+
+
+def x_for_y(dbh, table, xcol, ycol, yval):
+  dbh.execute(
+    "SELECT {} FROM {} WHERE {} = ?".format(xcol, table, ycol),
+    (yval,)
+  )
+  row = dbh.fetchone()
+  return row[0] if row else None
 
 
 def str_inner(node):
@@ -55,6 +70,50 @@ def insert_notes(dbh, table, ref, obj):
       "INSERT INTO {} (ref, note) VALUES (?,?)".format(table),
       note_rs
     )
+
+
+def id_for_author(dbh, author):
+  return x_for_y(dbh, 'authors', 'id', 'name', author)
+
+
+def make_id_author_rows(id, author_ids):
+  return tuple((id, aid) for aid in author_ids)
+
+
+def insert_authors(dbh, table, id, filename):
+  repo, filepath = os.path.split(filename)
+  authors = log_to_authors(repo, filepath)
+  author_ids = tuple(id_for_author(dbh, a) for a in authors)
+  authors_rs = make_id_author_rows(id, author_ids)
+
+  dbh.executemany(
+    "INSERT INTO {} (ref, author) VALUES (?,?)".format(table),
+    authors_rs
+  )
+
+
+AUTHORS = RemapDict({
+  'G. Grim'      : 'Genny Grim',
+  'mariannsliz'  : 'Mariann Sliz',
+  'Sara Uckelman': 'Sara L. Uckelman'
+})
+
+
+def log_to_authors(repo, path=None):
+  cmd = "git log --format='%an'"
+  if path:
+    cmd += " --follow {}".format(path)
+
+  print(cmd, file=sys.stderr)
+
+  # get authors from git log
+  with subprocess.Popen(cmd, cwd=repo, shell=True, stdout=subprocess.PIPE) as p:
+    out = p.communicate(timeout=30)[0].decode('utf-8')
+
+  authors = set(out.strip().split('\n'))
+
+  # normalize author names
+  return set(AUTHORS[a] for a in authors)
 
 
 def xml_to_db(parser, trans, process, dbpath, xmlpath):

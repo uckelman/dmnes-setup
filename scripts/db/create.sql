@@ -51,6 +51,26 @@ CREATE TABLE vnf_notes(
 
 CREATE INDEX vnf_notes_index ON vnf_notes(ref);
 
+CREATE TABLE authors(
+  id INTEGER PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL,
+  shortname TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE cnf_authors(
+  ref INTEGER NOT NULL REFERENCES cnf(id),
+  author INTEGER NOT NULL REFERENCES authors(id)
+);
+
+CREATE INDEX cnf_authors_index ON cnf_authors(ref);
+
+CREATE TABLE vnf_authors(
+  ref INTEGER NOT NULL REFERENCES vnf(id),
+  author INTEGER NOT NULL REFERENCES authors(id)
+);
+
+CREATE INDEX vnf_authors_index ON vnf_authors(ref);
+
 CREATE TABLE bib(
   id INTEGER PRIMARY KEY,
   key TEXT UNIQUE NOT NULL,

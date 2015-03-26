@@ -5,15 +5,6 @@ import sys
 from dmnes import *
 
 
-def x_for_y(dbh, table, xcol, ycol, yval):
-  dbh.execute(
-    "SELECT {} FROM {} WHERE {} = ?".format(xcol, table, ycol),
-    (yval,)
-  )
-  row = dbh.fetchone()
-  return row[0] if row else None
-
-
 def id_for_nym(dbh, nym):
   return x_for_y(dbh, 'cnf', 'id', 'nym', nym)
 
@@ -32,14 +23,11 @@ def area_for_place(vnf):
   return 'Unspecified'
 
 
-class SortKeyDict(dict):
-  def __missing__(self, key):
-    return key
+# TODO: load these from files
+# TODO: check that languages exist
+AREA_SKEY = RemapDict({ 'The Netherlands': 'Netherlands, The' })
 
-
-AREA_SKEY = SortKeyDict({ 'The Netherlands': 'Netherlands, The' })
-
-LANG_SKEY = SortKeyDict({
+LANG_SKEY = RemapDict({
   'Middle English'       : 'English 0',
   'English'              : 'English 1',
   'Middle Norwegian'     : 'Norwegian 0',
@@ -52,6 +40,7 @@ LANG_SKEY = SortKeyDict({
   'Early New High German': 'German 0',
   'German'               : 'German 1'
 })
+
 
 def make_vnf_row(dbh, vnf, spanned_vnf):
   area = area_for_place(vnf)
@@ -101,6 +90,7 @@ def process_vnf(parser, trans, dbh, filename):
   vnf_id = insert_vnf(dbh, vnf, spanned_vnf)
   insert_vnf_nyms(dbh, vnf_id, vnf)
   insert_notes(dbh, "vnf_notes", vnf_id, spanned_vnf)
+  insert_authors(dbh, "vnf_authors", vnf_id, filename)
 
 
 def main():
