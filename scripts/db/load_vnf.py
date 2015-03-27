@@ -28,17 +28,18 @@ def area_for_place(vnf):
 AREA_SKEY = RemapDict({ 'The Netherlands': 'Netherlands, The' })
 
 LANG_SKEY = RemapDict({
+  'Latin'                : 'AA Latin',
   'Middle English'       : 'English 0',
   'English'              : 'English 1',
-  'Middle Norwegian'     : 'Norwegian 0',
-  'Norwegian'            : 'Norwegian 1',
-  'Old Swedish'          : 'Swedish 0',
-  'Swedish'              : 'Swedish 1',
   'Old French'           : 'French 0',
   'Middle French'        : 'French 1',
   'French'               : 'French 2',
   'Early New High German': 'German 0',
   'German'               : 'German 1'
+  'Middle Norwegian'     : 'Norwegian 0',
+  'Norwegian'            : 'Norwegian 1',
+  'Old Swedish'          : 'Swedish 0',
+  'Swedish'              : 'Swedish 1',
 })
 
 
