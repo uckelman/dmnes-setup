@@ -7,11 +7,6 @@ import subprocess
 import sys
 
 
-class RemapDict(dict):
-  def __missing__(self, key):
-    return key
-
-
 def make_db_handle(db):
   dbh = db.cursor()
   dbh.execute("PRAGMA foreign_keys = ON")
@@ -92,11 +87,11 @@ def insert_authors(dbh, table, id, filename):
   )
 
 
-AUTHORS = RemapDict({
+AUTHORS = {
   'G. Grim'      : 'Genny Grim',
   'mariannsliz'  : 'Mariann Sliz',
   'Sara Uckelman': 'Sara L. Uckelman'
-})
+}
 
 
 def log_to_authors(repo, path=None):
@@ -113,7 +108,7 @@ def log_to_authors(repo, path=None):
   authors = set(out.strip().split('\n'))
 
   # normalize author names
-  return set(AUTHORS[a] for a in authors)
+  return set(AUTHORS.get(a, a) for a in authors)
 
 
 def xml_to_db(parser, trans, process, dbpath, xmlpath):

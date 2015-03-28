@@ -25,9 +25,9 @@ def area_for_place(vnf):
 
 # TODO: load these from files
 # TODO: check that languages exist
-AREA_SKEY = RemapDict({ 'The Netherlands': 'Netherlands, The' })
+AREA_SKEY = { 'The Netherlands': 'Netherlands, The' }
 
-LANG_SKEY = RemapDict({
+LANG_SKEY = {
   'Latin'                : 'AA Latin',
   'Middle English'       : 'English 0',
   'English'              : 'English 1',
@@ -40,7 +40,7 @@ LANG_SKEY = RemapDict({
   'Norwegian'            : 'Norwegian 1',
   'Old Swedish'          : 'Swedish 0',
   'Swedish'              : 'Swedish 1',
-})
+}
 
 
 def make_vnf_row(dbh, vnf, spanned_vnf):
@@ -53,9 +53,9 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
     str(vnf.case),
     int(vnf.dim),
     lang,
-    LANG_SKEY[lang],
+    LANG_SKEY.get(lang, lang),
     area,
-    AREA_SKEY[area],
+    AREA_SKEY.get(area, area),
     str_inner(spanned_vnf.place) if hasattr(vnf, 'place') else None,
     str(vnf.date),
     id_for_bib_key(dbh, str(vnf.bibl.key)),
