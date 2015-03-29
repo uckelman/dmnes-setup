@@ -35,11 +35,11 @@ LANG_SKEY = {
   'Middle French'        : 'French 1',
   'French'               : 'French 2',
   'Early New High German': 'German 0',
-  'German'               : 'German 1'
+  'German'               : 'German 1',
   'Middle Norwegian'     : 'Norwegian 0',
   'Norwegian'            : 'Norwegian 1',
   'Old Swedish'          : 'Swedish 0',
-  'Swedish'              : 'Swedish 1',
+  'Swedish'              : 'Swedish 1'
 }
 
 
