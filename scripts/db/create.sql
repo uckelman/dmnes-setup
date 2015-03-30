@@ -53,8 +53,10 @@ CREATE INDEX vnf_notes_index ON vnf_notes(ref);
 
 CREATE TABLE authors(
   id INTEGER PRIMARY KEY,
-  name TEXT UNIQUE NOT NULL,
-  shortname TEXT UNIQUE NOT NULL
+  surname TEXT NOT NULL,
+  skey TEXT UNIQUE NOT NULL,
+  prenames TEXT,
+  prenames_short TEXT
 );
 
 CREATE TABLE cnf_authors(

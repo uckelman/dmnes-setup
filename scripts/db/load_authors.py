@@ -5,13 +5,15 @@ import sys
 from dmnes import *
 
 
-def make_shortname(name):
-  s = name.split()
-  return ' '.join([n[0] + '.' for n in s[:-1]] + s[-1:])
-
-
 def make_author_rows(authors):
-  return tuple((name, make_shortname(name)) for name in authors)
+  return tuple(
+    (
+      AUTHORS_SURNAME.get(a, a.rsplit(maxsplit=1)[-1]),
+      AUTHORS_SKEY.get(a, ', '.join(reversed(a.rsplit(maxsplit=1)))),
+      AUTHORS_PRENAMES.get(a, a.rsplit(maxsplit=1)[0]),
+      AUTHORS_PRENAMES_SHORT.get(a, ''.join(n[0]+'.' for n in a.rsplit()[:-1]))
+    ) for a in authors
+  )
 
 
 def process_authors(dbpath, repo):
@@ -19,10 +21,10 @@ def process_authors(dbpath, repo):
   with sqlite3.connect(dbpath) as db:
     dbh = make_db_handle(db)
 
-    authors = log_to_authors(repo)
+    authors = authors_list(repo)
     authors_rs = make_author_rows(authors)
     dbh.executemany(
-      "INSERT INTO authors (name, shortname) VALUES (?,?)",
+      "INSERT INTO authors (surname, skey, prenames, prenames_short) VALUES (?,?,?,?)",
       authors_rs
     )
 
