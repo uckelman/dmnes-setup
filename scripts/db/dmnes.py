@@ -71,7 +71,7 @@ def insert_notes(dbh, table, ref, obj):
 # normalize author names coming from git
 AUTHORS_NORM = {
   'G. Grim'      : 'Genny Grim',
-  'mariannsliz'  : 'Mariann Sliz',
+  'mariannsliz'  : 'Mariann Slíz',
   'Sara Uckelman': 'Sara L. Uckelman'
 }
 
@@ -174,3 +174,4 @@ def xml_to_db(parser, trans, process, dbpath, xmlpath):
             process(parser, trans, dbh, authors, fpath)
           except (lxml.etree.XMLSyntaxError, sqlite3.IntegrityError) as e:
             print(fpath, e, file=sys.stderr)
+
