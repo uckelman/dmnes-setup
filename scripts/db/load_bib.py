@@ -27,7 +27,7 @@ def process_bib(parser, trans, dbh, authors, filename):
   bib = parse_xml(parser, filename)
   spanned_bib = trans(bib).getroot()
   insert_bib(dbh, spanned_bib)
-  
+
 
 def main():
   parser = make_parser()

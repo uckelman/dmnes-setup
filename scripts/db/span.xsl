@@ -7,7 +7,7 @@
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
-  </xsl:template> 
+  </xsl:template>
 
   <!-- match the CNF and VNF nodes which have freeform contents -->
   <xsl:template match="
