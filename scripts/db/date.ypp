@@ -166,7 +166,7 @@ struct Context {
 
 union YYSTYPE {
   int i;
-  zeit* z;
+  zeit z;
 };
 
 int yylex(YYSTYPE* yylval, Context* ctx);
@@ -192,11 +192,6 @@ extern int yydebug;
 %type <i> digit number anp circa century cert
 %type <z> zeit date range floruit simple_date
 
-// This suppresses a maybe-uninitialized warning from g++ 
-%initial-action { $$.z = nullptr; }
-
-%destructor { delete $$; } <z>
-
 %start zeit
 
 %%
@@ -207,17 +202,17 @@ zeit:
   date
   {
     $$ = $1;
-    ctx->z = *$$;
+    ctx->z = $$;
   }
 | range
   {
     $$ = $1;
-    ctx->z = *$$;
+    ctx->z = $$;
   }
 | floruit
   {
     $$ = $1;
-    ctx->z = *$$;
+    ctx->z = $$;
   }
 ;
 
@@ -225,12 +220,12 @@ floruit:
   'f' date
   {
     $$ = $2;
-    $$->floruit = true;
+    $$.floruit = true;
   }
 | 'f' range
   {
     $$ = $2;
-    $$->floruit = true;
+    $$.floruit = true;
   }
 ;
 
@@ -238,7 +233,7 @@ range:
   simple_date '-' simple_date
   {
     $$ = $1;
-    $$->end = $3->beg;
+    $$.end = $3.beg;
   }
 ;
 
@@ -248,42 +243,42 @@ date:
   {
     $$ = $1;
 // FIXME: should simple_dates have ops?
-    $$->beg.year[1] = $3->beg.year[0];
+    $$.beg.year[1] = $3.beg.year[0];
   }
 ;
 
 simple_date:
   anp circa number cert
   {
-    $$ = new zeit();
-    $$->floruit = false;
-    $$->beg.year[0] = $3;
-    $$->beg.anp = $1;
-    $$->beg.flags = $2 | $4;
+    $$ = zeit();
+    $$.floruit = false;
+    $$.beg.year[0] = $3;
+    $$.beg.anp = $1;
+    $$.beg.flags = $2 | $4;
   }
 | anp circa number '/' number cert
   {
-    $$ = new zeit;
-    $$->floruit = false;
-    $$->beg.year[0] = $3;
+    $$ = zeit();
+    $$.floruit = false;
+    $$.beg.year[0] = $3;
 // TODO: assert that $5 == $3 + 1
-    $$->beg.anp = $1;
-    $$->beg.flags = $2 | $6;
+    $$.beg.anp = $1;
+    $$.beg.flags = $2 | $6;
   }
 | anp circa number century cert
   {
-    $$ = new zeit;
-    $$->floruit = false;
-    $$->beg.year[0] = $3;
-    $$->beg.anp = $1;
-    $$->beg.flags = $2 | CENTURY | $5;
+    $$ = zeit();
+    $$.floruit = false;
+    $$.beg.year[0] = $3;
+    $$.beg.anp = $1;
+    $$.beg.flags = $2 | CENTURY | $5;
   }
 | fin number century cert
   {
-    $$ = new zeit;
-    $$->floruit = false;
-    $$->beg.year[0] = $2;
-    $$->beg.flags = FIN | CENTURY | $4;
+    $$ = zeit();
+    $$.floruit = false;
+    $$.beg.year[0] = $2;
+    $$.beg.flags = FIN | CENTURY | $4;
   }
 ;
 
