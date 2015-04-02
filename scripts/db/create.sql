@@ -32,6 +32,7 @@ CREATE TABLE vnf(
   area_skey TEXT NOT NULL,
   place TEXT,
   date TEXT CHECK(LENGTH(date) > 0) NOT NULL,
+  date_skey INTEGER NOT NULL,
   bib_id INTEGER NOT NULL REFERENCES bib(id),
   bib_loc TEXT
 );
