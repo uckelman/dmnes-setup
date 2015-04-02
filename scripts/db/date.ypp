@@ -3,6 +3,7 @@
 #include <cctype>
 #include <cstring>
 #include <iostream>
+#include <string>
 
 extern "C" {
   typedef struct {
@@ -170,6 +171,7 @@ union YYSTYPE {
 };
 
 int yylex(YYSTYPE* yylval, Context* ctx);
+
 void yyerror(Context* ctx, const char* msg);
 
 }
@@ -189,7 +191,7 @@ extern int yydebug;
 //%expect 0
 %error-verbose
 
-%type <i> digit number anp circa century cert
+%type <i> digit number anp circa century ordinal_suffix cert
 %type <z> zeit date range floruit simple_date
 
 %start zeit
@@ -251,7 +253,6 @@ simple_date:
   anp circa number cert
   {
     $$ = zeit();
-    $$.floruit = false;
     $$.beg.year[0] = $3;
     $$.beg.anp = $1;
     $$.beg.flags = $2 | $4;
@@ -259,7 +260,6 @@ simple_date:
 | anp circa number '/' number cert
   {
     $$ = zeit();
-    $$.floruit = false;
     $$.beg.year[0] = $3;
 // TODO: assert that $5 == $3 + 1
     $$.beg.anp = $1;
@@ -267,17 +267,17 @@ simple_date:
   }
 | anp circa number century cert
   {
+// TODO: assert that last digit of number matches ordinal suffix
     $$ = zeit();
-    $$.floruit = false;
-    $$.beg.year[0] = $3;
+    $$.beg.year[0] = ($3 - 1) * 100 + 1;
     $$.beg.anp = $1;
     $$.beg.flags = $2 | CENTURY | $5;
   }
 | fin number century cert
   {
+// TODO: assert that last digit of number matches ordinal suffix
     $$ = zeit();
-    $$.floruit = false;
-    $$.beg.year[0] = $2;
+    $$.beg.year[0] = $2 * 100;
     $$.beg.flags = FIN | CENTURY | $4;
   }
 ;
@@ -336,15 +336,27 @@ digit:
 century:
   ordinal_suffix 'C'
   {
-    $$ = CENTURY;
+    $$ = $1;
   }
 ;
 
 ordinal_suffix:
   's' 't'
+  {
+    $$ = 1;
+  }
 | 'n' 'd'
+  {
+    $$ = 2;
+  }
 | 'r' 'd'
+  {
+    $$ = 3;
+  }
 | 't' 'h'
+  {
+    $$ = 0;
+  }
 ;
 
 cert:
@@ -374,8 +386,8 @@ int yylex(YYSTYPE*, Context* ctx) {
   return -1; // EOF
 }
 
-void yyerror(Context*, const char* msg) {
-  std::cerr << msg << std::endl;
+void yyerror(Context* ctx, const char* msg) {
+  std::cerr << msg << ": " << std::string(ctx->beg, ctx->end) << std::endl;
 }
 
 }

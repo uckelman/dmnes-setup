@@ -3,6 +3,7 @@
 import sys
 
 from dmnes import *
+from zeit import date_skey
 
 
 def id_for_nym(dbh, nym):
@@ -46,6 +47,7 @@ LANG_SKEY = {
 def make_vnf_row(dbh, vnf, spanned_vnf):
   area = area_for_place(vnf)
   lang = str(vnf.lang)
+  date = str(vnf.date)
 
   return (
     str(vnf.name),
@@ -57,7 +59,8 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
     area,
     AREA_SKEY.get(area, area),
     str_inner(spanned_vnf.place) if hasattr(vnf, 'place') else None,
-    str(vnf.date),
+    date,
+    date_skey(date),
     id_for_bib_key(dbh, str(vnf.bibl.key)),
     str(spanned_vnf.bibl.loc) if hasattr(vnf.bibl, 'loc') else None
   )
@@ -66,7 +69,7 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
 def insert_vnf(dbh, vnf, spanned_vnf):
   vnf_r = make_vnf_row(dbh, vnf, spanned_vnf)
   dbh.execute(
-    "INSERT INTO vnf (name, gen, 'case', dim, lang, lang_skey, area, area_skey, place, date, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO vnf (name, gen, 'case', dim, lang, lang_skey, area, area_skey, place, date, date_skey, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
     vnf_r
   )
   return dbh.lastrowid
