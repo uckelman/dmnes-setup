@@ -1,0 +1,410 @@
+%code requires {
+
+#include <cctype>
+#include <cstring>
+#include <iostream>
+
+extern "C" {
+  typedef struct {
+    int16_t year[2];
+    int8_t anp;
+    uint8_t flags;
+  } date;
+
+  typedef struct {
+    bool floruit;
+    date beg, end;
+  } zeit;
+}
+
+namespace {
+
+enum { ANTE, NONE, POST };
+
+enum {
+  FIN       = 1 << 0,
+  CIRCA     = 1 << 3,
+  CENTURY   = 1 << 4,
+  SLASH     = 1 << 5,
+  BOUNDS    = 1 << 6,
+  UNCERTAIN = 1 << 7
+};
+
+std::ostream& operator<<(std::ostream& o, const date& d) {
+  o << d.year[0] << ' ' << d.year[1] << ' '
+    << int(d.anp) << ' ' << int(d.flags);
+  return o;
+}
+
+std::ostream& operator<<(std::ostream& o, const zeit& z) {
+  o << z.floruit << ' ';
+
+  if (z.end.year[0]) {
+    o << '[' << z.beg << ", " << z.end << ']';
+  }
+  else {
+    o << z.beg;
+  } 
+
+  return o;
+}
+
+template <class T> inline constexpr
+int signum(T x) {
+  return (T(0) < x) - (x < T(0));
+}
+
+/*
+bool operator<(const date& l, const date& r) {
+  switch (signum(l.year[0] - r.year[0])) {
+  case -1:
+    return true;
+  case  0:
+    switch (signum(l.anp - r.anp)) {
+    case -1:
+      return true;
+    case  0:
+      break;
+    case  1:
+      return false;
+    }
+    break;
+  case  1:
+    return false;
+  }
+
+  switch (l.anp) {
+  case ANTE:
+    if ((l.flags & CIRCA) > (r.flags & CIRCA)) {
+      return true;
+    }
+    break;
+  case NONE:
+    if ((l.flags & CIRCA) > (r.flags & CIRCA)) {
+      return true;
+    }
+    break;
+  case POST:
+    if ((l.flags & CIRCA) < (r.flags & CIRCA)) {
+      return true;
+    }
+    break;
+  }  
+
+  if ((l.flags & SLASH) < (r.flags & SLASH)) {
+    return true;
+  }
+
+  if (l.flags & BOUNDS) {
+    if (r.flags & BOUNDS) {
+      switch (signum(l.year[1] - r.year[1])) {
+      case -1:
+        return true;
+      case  0:
+        return false;
+      case  1:
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+  else if (r.flags & BOUNDS) {
+    return false;
+  }
+
+  return false;
+}
+
+bool operator<(const zeit& l, const zeit& r) {
+  if (l.beg < r.beg) {
+    return true;
+  }
+  else if (r.beg < l.beg) {
+    return false;
+  }
+  else if (l.end.year[0] == 0) {
+    if (r.end.year[0]) {
+      return true;
+    }
+    else {
+      return !l.floruit && r.floruit;
+    }
+  }
+  else if (l.end < r.end) {
+    return true;
+  }
+  else {
+    return !l.floruit && r.floruit;
+  }
+}
+*/
+
+uint32_t key(const date& d) {
+  return (d.year[0] << 3) | d.anp;
+}
+
+uint32_t key(const zeit& z) {
+  return (key(z.beg) << 15) | key(z.end);
+}
+
+bool operator<(const zeit& l, const zeit& r) {
+  return key(l) < key(r);
+}
+
+struct Context {
+  Context(const char* beg, const char* end):
+    beg(beg), end(end), cur(beg) {}
+
+  const char* beg;
+  const char* end;
+  const char* cur;
+  
+  zeit z;
+};
+
+union YYSTYPE {
+  int i;
+  zeit* z;
+};
+
+int yylex(YYSTYPE* yylval, Context* ctx);
+void yyerror(Context* ctx, const char* msg);
+
+}
+
+#define YYDEBUG 0
+
+#if YYDEBUG
+extern int yydebug;
+#endif
+}
+
+%define api.pure
+%lex-param { Context* ctx }
+%parse-param { Context* ctx }
+
+// FIXME: conflict
+//%expect 0
+%error-verbose
+
+%type <i> digit number anp circa century cert
+%type <z> zeit date range floruit simple_date
+
+// This suppresses a maybe-uninitialized warning from g++ 
+%initial-action { $$.z = nullptr; }
+
+%destructor { delete $$; } <z>
+
+%start zeit
+
+%%
+
+// FIXME: memory leaks
+
+zeit:
+  date
+  {
+    $$ = $1;
+    ctx->z = *$$;
+  }
+| range
+  {
+    $$ = $1;
+    ctx->z = *$$;
+  }
+| floruit
+  {
+    $$ = $1;
+    ctx->z = *$$;
+  }
+;
+
+floruit:
+  'f' date
+  {
+    $$ = $2;
+    $$->floruit = true;
+  }
+| 'f' range
+  {
+    $$ = $2;
+    $$->floruit = true;
+  }
+;
+
+range:
+  simple_date '-' simple_date
+  {
+    $$ = $1;
+    $$->end = $3->beg;
+  }
+;
+
+date:
+  simple_date
+| simple_date 'x' simple_date
+  {
+    $$ = $1;
+// FIXME: should simple_dates have ops?
+    $$->beg.year[1] = $3->beg.year[0];
+  }
+;
+
+simple_date:
+  anp circa number cert
+  {
+    $$ = new zeit();
+    $$->floruit = false;
+    $$->beg.year[0] = $3;
+    $$->beg.anp = $1;
+    $$->beg.flags = $2 | $4;
+  }
+| anp circa number '/' number cert
+  {
+    $$ = new zeit;
+    $$->floruit = false;
+    $$->beg.year[0] = $3;
+// TODO: assert that $5 == $3 + 1
+    $$->beg.anp = $1;
+    $$->beg.flags = $2 | $6;
+  }
+| anp circa number century cert
+  {
+    $$ = new zeit;
+    $$->floruit = false;
+    $$->beg.year[0] = $3;
+    $$->beg.anp = $1;
+    $$->beg.flags = $2 | CENTURY | $5;
+  }
+| fin number century cert
+  {
+    $$ = new zeit;
+    $$->floruit = false;
+    $$->beg.year[0] = $2;
+    $$->beg.flags = FIN | CENTURY | $4;
+  }
+;
+
+anp:
+  /* empty */
+  {
+    $$ = NONE;
+  }
+| 'a'
+  {
+    $$ = ANTE;
+  }
+| 'p'
+  {
+    $$ = POST;
+  }
+;
+
+circa:
+  /* empty */
+  {
+    $$ = 0;
+  }
+| 'c'
+  {
+    $$ = CIRCA;
+  }
+;
+
+fin:
+  'f' 'i' 'n'
+;
+
+number:
+  digit
+| number digit
+  {
+    $$ = 10*$1 + $2;
+  }
+;
+
+digit:
+  '0' { $$ = 0; }
+| '1' { $$ = 1; }
+| '2' { $$ = 2; }
+| '3' { $$ = 3; } 
+| '4' { $$ = 4; }
+| '5' { $$ = 5; }
+| '6' { $$ = 6; }
+| '7' { $$ = 7; }
+| '8' { $$ = 8; }
+| '9' { $$ = 9; }
+;
+
+century:
+  ordinal_suffix 'C'
+  {
+    $$ = CENTURY;
+  }
+;
+
+ordinal_suffix:
+  's' 't'
+| 'n' 'd'
+| 'r' 'd'
+| 't' 'h'
+;
+
+cert:
+  /* empty */
+  {
+    $$ = 0;
+  }
+| '?'
+  {
+    $$ = UNCERTAIN;
+  }
+;
+
+%%
+
+namespace {
+
+int yylex(YYSTYPE*, Context* ctx) {
+  while (ctx->cur != ctx->end) {
+    // skip spaces; otherwise just pass on the chars
+    const char c = *ctx->cur++;
+    if (!std::isspace(c)) {
+      return c;
+    }
+  }
+
+  return -1; // EOF
+}
+
+void yyerror(Context*, const char* msg) {
+  std::cerr << msg << std::endl;
+}
+
+}
+
+extern "C" {
+  zeit create_zeit(const char* s) {
+    Context ctx(s, s+std::strlen(s));
+    yyparse(&ctx);
+    return ctx.z;
+  }
+
+  int compare_zeit(const zeit* l, const zeit* r) {
+    return signum(
+      static_cast<int64_t>(key(*l)) - static_cast<int64_t>(key(*r))
+    );
+  }
+
+  unsigned int key_zeit(const zeit* z) {
+    return key(*z);
+  }
+}
+
+/*
+int main(int argc, char** argv) {
+  std::cout << create_zeit(argv[1]) << std::endl;
+}
+*/
