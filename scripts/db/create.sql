@@ -15,7 +15,7 @@ INSERT INTO cnf_fts(cnf_fts) VALUES('rebuild');
 
 CREATE TABLE cnf_notes(
   ref INTEGER NOT NULL REFERENCES cnf(id),
-  note TEXT
+  note TEXT NOT NULL
 );
 
 CREATE INDEX cnf_notes_index ON cnf_notes(ref);
@@ -27,7 +27,7 @@ CREATE TABLE vnf(
   "case" TEXT CHECK("case" IN ('n/a', 'abl', 'acc', 'dat', 'gen', 'nom', 'obl', 'unc')) NOT NULL,
   dim INTEGER CHECK(dim == 0 OR dim == 1) NOT NULL,
   lang TEXT CHECK(LENGTH(lang) > 0) NOT NULL,
-  lang_skey CHECK(LENGTH(lang) > 0) NOT NULL,
+  lang_skey CHECK(LENGTH(lang_skey) > 0) NOT NULL,
   area TEXT NOT NULL,
   area_skey TEXT NOT NULL,
   place TEXT,
@@ -46,7 +46,7 @@ CREATE INDEX cnf_vnf_index ON vnf_cnf(cnf);
 
 CREATE TABLE vnf_notes(
   ref INTEGER NOT NULL REFERENCES vnf(id),
-  note TEXT
+  note TEXT NOT NULL
 );
 
 CREATE INDEX vnf_notes_index ON vnf_notes(ref);
