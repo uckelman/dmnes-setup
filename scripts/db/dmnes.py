@@ -72,6 +72,7 @@ def insert_notes(dbh, table, ref, obj):
 AUTHORS_NORM = {
   'G. Grim'      : 'Genny Grim',
   'mariannsliz'  : 'Mariann Slíz',
+  'Mariann Sliz' : 'Mariann Slíz',
   'Sara Uckelman': 'Sara L. Uckelman'
 }
 
