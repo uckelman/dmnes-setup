@@ -48,7 +48,7 @@ LANG_SKEY = {
 def make_vnf_row(dbh, vnf, spanned_vnf):
   area = area_for_place(vnf)
   lang = str(vnf.lang)
-  date = str(vnf.date)
+  date_raw = str(vnf.date)
 
   return (
     str(vnf.name),
@@ -60,17 +60,18 @@ def make_vnf_row(dbh, vnf, spanned_vnf):
     area,
     AREA_SKEY.get(area, area),
     str_inner(spanned_vnf.place) if hasattr(vnf, 'place') else None,
-    date,
-    date_skey(date),
+    date_raw.replace('-', '–'),
+    date_skey(date_raw),
     id_for_bib_key(dbh, str(vnf.bibl.key)),
-    str(spanned_vnf.bibl.loc) if hasattr(vnf.bibl, 'loc') else None
+    str(spanned_vnf.bibl.loc) if hasattr(vnf.bibl, 'loc') else None,
+    1 if vnf.meta.live else 0
   )
 
 
 def insert_vnf(dbh, vnf, spanned_vnf):
   vnf_r = make_vnf_row(dbh, vnf, spanned_vnf)
   dbh.execute(
-    "INSERT INTO vnf (name, gen, 'case', dim, lang, lang_skey, area, area_skey, place, date, date_skey, bib_id, bib_loc) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO vnf (name, gen, 'case', dim, lang, lang_skey, area, area_skey, place, date, date_skey, bib_id, bib_loc, live) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     vnf_r
   )
   return dbh.lastrowid

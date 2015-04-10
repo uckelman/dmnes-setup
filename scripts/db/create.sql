@@ -7,7 +7,8 @@ CREATE TABLE cnf(
   gen TEXT CHECK(gen IN ('M', 'F', 'U')) NOT NULL,
   etym TEXT,
   usg TEXT,
-  def TEXT
+  def TEXT,
+  live INTEGER NOT NULL
 );
 
 CREATE VIRTUAL TABLE cnf_fts USING fts4(content='cnf', id, nym, etym, usg, def);
@@ -34,7 +35,8 @@ CREATE TABLE vnf(
   date TEXT CHECK(LENGTH(date) > 0) NOT NULL,
   date_skey INTEGER NOT NULL,
   bib_id INTEGER NOT NULL REFERENCES bib(id),
-  bib_loc TEXT
+  bib_loc TEXT,
+  live INTEGER NOT NULL
 );
 
 CREATE TABLE vnf_cnf(
