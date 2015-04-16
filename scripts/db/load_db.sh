@@ -18,6 +18,6 @@ rm -f $DB
 sqlite3 $DB <$HERE/create.sql
 
 $HERE/load_authors.py $DB $DMNES
-$HERE/load_bib.py $DB $HERE/span.xsl $DMNES/bib
+$HERE/load_bib.py $DB $HERE/bibtex.xsl $DMNES/bib
 $HERE/load_cnf.py $DB $DMNES/schemata/cnf.xsd $HERE/span.xsl $DMNES/CNFs
 $HERE/load_vnf.py $DB $DMNES/schemata/vnf.xsd $HERE/span.xsl $DMNES/VNFs
