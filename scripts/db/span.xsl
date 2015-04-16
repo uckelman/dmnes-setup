@@ -142,9 +142,4 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- replace all non-key bibl nodes with spans -->
-  <xsl:template match="/bibl//*[not(name() = 'key')]">
-    <span class="{name()}"><xsl:apply-templates select="@*|node()"/></span>
-  </xsl:template>
-
 </xsl:stylesheet>
