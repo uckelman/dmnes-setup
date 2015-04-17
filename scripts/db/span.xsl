@@ -135,8 +135,12 @@
           <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
       </xsl:when>
+      <!-- replace nym with link -->
+      <xsl:when test="name() = 'nym'">
+        <a class="{name()}" href="{text()}"><xsl:apply-templates select="@*|node()"/></a>
+      </xsl:when>
+      <!-- replace non-HTML5 nodes with spans -->
       <xsl:otherwise>
-        <!-- replace non-HTML5 nodes with spans -->
         <span class="{name()}"><xsl:apply-templates select="@*|node()"/></span>
       </xsl:otherwise>
     </xsl:choose>
