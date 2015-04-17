@@ -137,7 +137,7 @@
       </xsl:when>
       <!-- replace nym with link -->
       <xsl:when test="name() = 'nym'">
-        <a class="{name()}" href="{text()}"><xsl:apply-templates select="@*|node()"/></a>
+        <a class="{name()}" href="{.}"><xsl:value-of select="."/></a>
       </xsl:when>
       <!-- replace non-HTML5 nodes with spans -->
       <xsl:otherwise>
