@@ -7,6 +7,10 @@ import subprocess
 import sys
 
 
+class RecordError(Exception):
+  pass
+
+
 def make_db_handle(db):
   dbh = db.cursor()
   dbh.execute("PRAGMA foreign_keys = ON")
@@ -173,6 +177,8 @@ def xml_to_db(parser, trans, process, dbpath, xmlpath):
           fpath = os.path.join(root, f)
           try:
             process(parser, trans, dbh, authors, fpath)
-          except (lxml.etree.XMLSyntaxError, sqlite3.IntegrityError) as e:
+          except (
+            lxml.etree.XMLSyntaxError, sqlite3.IntegrityError, RecordError
+          ) as e:
             print(fpath, e, file=sys.stderr)
 

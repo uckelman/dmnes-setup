@@ -18,7 +18,7 @@ def make_bib_html(bibtex):
                         stderr=subprocess.PIPE) as p:
     out, err = p.communicate(bibtex.encode('utf-8'), timeout=30)
     if p.returncode:
-      raise RuntimeError('bibtex2html failed: ' + err.decode('utf-8'))
+      raise RecordError('bibtex2html failed: ' + err.decode('utf-8'))
     out = out.decode('utf-8')
 
   dd = lxml.html.fromstring(out).find('dd')
@@ -26,7 +26,6 @@ def make_bib_html(bibtex):
 
 
 def make_bib_row(key, html):
-  print(html, file=sys.stderr)
   return (key, html)
 
 
