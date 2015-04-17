@@ -1,8 +1,13 @@
 #!/usr/bin/python3 -b
 
+import re
 import sys
 
 from dmnes import *
+
+
+def paragraphize(s):
+  return '\n'.join('<p>{}</p>'.format(p.strip()) for p in re.split('\n{2,}', s))
 
 
 def make_cnf_row(cnf):
@@ -10,8 +15,8 @@ def make_cnf_row(cnf):
     str(cnf.nym),
     str(cnf.gen),
     str_inner(cnf.etym),
-    str_inner(cnf.usg) if hasattr(cnf, 'usg') else None,
-    str_inner(cnf['def']) if hasattr(cnf, 'def') else None,
+    paragraphize(str_inner(cnf.usg)) if hasattr(cnf, 'usg') else None,
+    paragraphize(str_inner(cnf['def'])) if hasattr(cnf, 'def') else None,
     1 if cnf.meta.live else 0
   )
 
