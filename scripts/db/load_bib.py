@@ -11,8 +11,15 @@ def make_bib_html(bibtex):
   # FIXME: remove TMPDIR for bibtex2html 1.98+
   cmd = 'TMPDIR=. bibtex2html -nodoc -noheader -nofooter -rawurl -unicode -dl'
 
-  with subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE) as p:
-    out = p.communicate(bibtex.encode('utf-8'), timeout=30)[0].decode('utf-8')
+  with subprocess.Popen(cmd,
+                        shell=True,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE) as p:
+    out, err = p.communicate(bibtex.encode('utf-8'), timeout=30)
+    if p.returncode:
+      raise RuntimeError('bibtex2html failed: ' + err.decode('utf-8'))
+    out = out.decode('utf-8')
 
   dd = lxml.html.fromstring(out).find('dd')
   return ' '.join(str_inner(dd).split())
