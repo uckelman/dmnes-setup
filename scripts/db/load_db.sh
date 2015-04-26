@@ -5,7 +5,7 @@ if [ "$#" -lt 1 ]; then
   exit 1
 fi
 
-if [ "$#" -gt 2 ]; then
+if [ "$#" -gt 3 ]; then
   echo "$0: Too many arguments." >&2
   exit 1
 fi
@@ -21,3 +21,7 @@ $HERE/load_authors.py $DB $DMNES
 $HERE/load_bib.py $DB $HERE/bibtex.xsl $DMNES/bib
 $HERE/load_cnf.py $DB $DMNES/schemata/cnf.xsd $HERE/span.xsl $DMNES/CNFs
 $HERE/load_vnf.py $DB $DMNES/schemata/vnf.xsd $HERE/span.xsl $DMNES/VNFs
+
+if [ ${3:-x} = 'live' ]; then
+  sqlite3 $DB <$HERE/live.sql
+fi
