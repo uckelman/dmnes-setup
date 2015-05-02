@@ -1,4 +1,6 @@
 import ctypes
+import os.path
+
 
 class Date(ctypes.Structure):
   _fields_ = [
@@ -43,7 +45,8 @@ class Zeit(ctypes.Structure):
     return self > other or self == other
 
 
-lib = ctypes.cdll.LoadLibrary('./libdate.so')
+LIBPATH = os.path.join(os.path.dirname(__file__), 'libdate.so')
+lib = ctypes.cdll.LoadLibrary(LIBPATH)
 
 create = lib.create_zeit
 create.argtypes = [ ctypes.c_char_p ]
