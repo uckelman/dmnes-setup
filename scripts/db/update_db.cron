@@ -18,6 +18,6 @@ popd
 if [ "$STALE" -o ! -e $HOME/dmnes-viewer/dmnes.sqlite ]; then
   $HOME/dmnes-setup/scripts/db/load_db.sh $HOME/dmnes $HOME/dmnes.sqlite
   mv $HOME/dmnes.sqlite $HOME/dmnes-viewer
-  restorecon $HOME/dmnes-viewer/dmnes.sqlite
+  /usr/sbin/restorecon $HOME/dmnes-viewer/dmnes.sqlite
   touch $HOME/dmnes-viewer/viewer.wsgi
 fi
