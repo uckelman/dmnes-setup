@@ -25,7 +25,7 @@ CREATE TABLE vnf(
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
   gen TEXT CHECK(gen IN ('M', 'F', 'U')) NOT NULL,
-  "case" TEXT CHECK("case" IN ('n/a', 'abl', 'acc', 'dat', 'gen', 'nom', 'obl', 'unc')) NOT NULL,
+  "case" TEXT CHECK("case" IN ('n/a', 'abl', 'acc', 'dat', 'gen', 'nom', 'obl', 'unc', 'voc')) NOT NULL,
   dim INTEGER CHECK(dim == 0 OR dim == 1) NOT NULL,
   lang TEXT CHECK(LENGTH(lang) > 0) NOT NULL,
   lang_skey CHECK(LENGTH(lang_skey) > 0) NOT NULL,
