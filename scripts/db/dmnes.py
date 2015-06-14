@@ -80,13 +80,21 @@ AUTHORS_NORM = {
   'Sara Uckelman': 'Sara L. Uckelman'
 }
 
-AUTHORS_SKEY = {}
+AUTHORS_SKEY = {
+  'Rebecca Le Get' : 'Le Get, Rebecca'
+}
 
-AUTHORS_SURNAME = {}
+AUTHORS_SURNAME = {
+  'Rebecca Le Get' : 'Le Get'
+}
 
-AUTHORS_PRENAMES = {}
+AUTHORS_PRENAMES = {
+  'Rebecca Le Get' : 'Rebecca'
+}
 
-AUTHORS_PRENAMES_SHORT = {}
+AUTHORS_PRENAMES_SHORT = {
+  'Rebecca Le Get' : 'R.'
+}
 
 
 def id_for_author(dbh, author):
