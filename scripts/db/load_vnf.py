@@ -30,8 +30,9 @@ AREA_SKEY = { 'The Netherlands': 'Netherlands, The' }
 
 LANG_SKEY = {
   'Latin'                : 'AA Latin',
-  'Middle English'       : 'English 0',
-  'English'              : 'English 1',
+  'Old English'          : 'English 0',
+  'Middle English'       : 'English 1',
+  'English'              : 'English 2',
   'Old French'           : 'French 0',
   'Middle French'        : 'French 1',
   'French'               : 'French 2',
