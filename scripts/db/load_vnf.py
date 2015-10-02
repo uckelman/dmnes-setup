@@ -32,7 +32,7 @@ LANG_SKEY = {
   'Latin'                : 'AA Latin',
   'Old English'          : 'English 0',
   'Middle English'       : 'English 1',
-  'English'              : 'English 2',
+  'Early Modern English' : 'English 2',
   'Old French'           : 'French 0',
   'Middle French'        : 'French 1',
   'French'               : 'French 2',
