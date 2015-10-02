@@ -29,21 +29,21 @@ def area_for_place(vnf):
 AREA_SKEY = { 'The Netherlands': 'Netherlands, The' }
 
 LANG_SKEY = {
-  'Latin'                : 'AA Latin',
-  'Old English'          : 'English 0',
-  'Middle English'       : 'English 1',
-  'Early Modern English' : 'English 2',
-  'Old French'           : 'French 0',
-  'Middle French'        : 'French 1',
-  'French'               : 'French 2',
-  'Middle High German'   : 'German 0 0',
-  'Early New High German': 'German 0 1',
-  'Middle Low German'    : 'German 1 0',
-  'German'               : 'German 2',
-  'Middle Norwegian'     : 'Norwegian 0',
-  'Norwegian'            : 'Norwegian 1',
-  'Old Swedish'          : 'Swedish 0',
-  'Swedish'              : 'Swedish 1'
+  'Latin'                 : 'AA Latin',
+  'Old English'           : 'English 0',
+  'Middle English'        : 'English 1',
+  'Early Modern English'  : 'English 2',
+  'Old French'            : 'French 0',
+  'Middle French'         : 'French 1',
+  'French'                : 'French 2',
+  'Middle High German'    : 'German 0 0',
+  'Early New High German' : 'German 0 1',
+  'Middle Low German'     : 'German 1 0',
+  'German'                : 'German 2',
+  'Middle Norwegian'      : 'Norwegian 0',
+  'Norwegian'             : 'Norwegian 1',
+  'Old Swedish'           : 'Swedish 0',
+  'Early Modern Swedish'  : 'Swedish 1'
 }
 
 
