@@ -19,6 +19,6 @@ done
 
 remaining=$(cat chars)
 echo "Characters remaining: $remaining"
-if [[ "$remaining" && $remaining_ok -eq 0]]; then
+if [[ -n "$remaining" && $remaining_ok -eq 0 ]]; then
   exit 1
 fi
