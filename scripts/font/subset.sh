@@ -1,20 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-REPO=$1
-SITE=$2
-OUT=$(realpath $3)
+repo=$1
+site=$2
+remaining_ok=$3
 shift 3
 
-./chars.sh $REPO $SITE >chars
+if [[ ! -f chars0 ]]; then
+  ./chars.sh $repo $site >chars0
+fi
+cp chars0 chars
 
-while [ $# -gt 0 ]; do
-  IN=$(realpath $1)
-  OFILE=$(basename -s .ttf $IN)Subset.ttf
-  pushd font-optimizer
-  ./subset.pl --charsfile=../chars $IN $OUT/$OFILE
-  popd
-  sfnt2woff $OUT/$OFILE
-  mkeot $OUT/$OFILE >$OUT/$(basename -s .ttf $OFILE).eot
-  shift
+for font in "$@"; do
+  base=$(basename -s .otf "$font")
+  pyftsubset "$font" --text-file=chars --output-file="${base}Subset.otf"
+  mv chars chars~
+  ./subtract.py "${base}Subset.otf" <chars~ >chars
 done
 
+remaining=$(cat chars)
+echo "Characters remaining: $remaining"
+if [[ "$remaining" && $remaining_ok -eq 0]]; then
+  exit 1
+fi
