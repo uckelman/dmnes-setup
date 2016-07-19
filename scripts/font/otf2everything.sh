@@ -6,4 +6,5 @@ for otf in "$@"; do
   python -c "import fontforge
 fontforge.open('$otf').generate('${base}.ttf')"
   mkeot "${base}.ttf" >"${base}.eot"
+  woff2/woff2_compress "${base}.ttf"
 done
