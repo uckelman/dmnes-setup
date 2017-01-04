@@ -55,99 +55,15 @@ int signum(T x) {
   return (T(0) < x) - (x < T(0));
 }
 
-/*
-bool operator<(const date& l, const date& r) {
-  switch (signum(l.year[0] - r.year[0])) {
-  case -1:
-    return true;
-  case  0:
-    switch (signum(l.anp - r.anp)) {
-    case -1:
-      return true;
-    case  0:
-      break;
-    case  1:
-      return false;
-    }
-    break;
-  case  1:
-    return false;
-  }
-
-  switch (l.anp) {
-  case ANTE:
-    if ((l.flags & CIRCA) > (r.flags & CIRCA)) {
-      return true;
-    }
-    break;
-  case NONE:
-    if ((l.flags & CIRCA) > (r.flags & CIRCA)) {
-      return true;
-    }
-    break;
-  case POST:
-    if ((l.flags & CIRCA) < (r.flags & CIRCA)) {
-      return true;
-    }
-    break;
-  }  
-
-  if ((l.flags & SLASH) < (r.flags & SLASH)) {
-    return true;
-  }
-
-  if (l.flags & BOUNDS) {
-    if (r.flags & BOUNDS) {
-      switch (signum(l.year[1] - r.year[1])) {
-      case -1:
-        return true;
-      case  0:
-        return false;
-      case  1:
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
-  }
-  else if (r.flags & BOUNDS) {
-    return false;
-  }
-
-  return false;
-}
-
-bool operator<(const zeit& l, const zeit& r) {
-  if (l.beg < r.beg) {
-    return true;
-  }
-  else if (r.beg < l.beg) {
-    return false;
-  }
-  else if (l.end.year[0] == 0) {
-    if (r.end.year[0]) {
-      return true;
-    }
-    else {
-      return !l.floruit && r.floruit;
-    }
-  }
-  else if (l.end < r.end) {
-    return true;
-  }
-  else {
-    return !l.floruit && r.floruit;
-  }
-}
-*/
-
 uint32_t key(const date& d) {
-  return (d.year[0] << 3) | d.anp;
+  // 11 + 3 + 11 = 25 bits
+  return (static_cast<uint32_t>(d.year[0]) << 14) |
+         (static_cast<uint32_t>(d.anp) << 11) |
+         d.year[1];
 }
 
-uint32_t key(const zeit& z) {
-  return (key(z.beg) << 15) | key(z.end);
+uint64_t key(const zeit& z) {
+  return (static_cast<uint64_t>(key(z.beg)) << 25) | key(z.end);
 }
 
 bool operator<(const zeit& l, const zeit& r) {
@@ -192,7 +108,7 @@ extern int yydebug;
 %error-verbose
 
 %type <i> digit number anp circa century ordinal_suffix cert
-%type <z> zeit date range floruit simple_date
+%type <z> zeit almost_zeit date range floruit simple_date
 
 %start zeit
 
@@ -201,21 +117,17 @@ extern int yydebug;
 // FIXME: memory leaks
 
 zeit:
+  almost_zeit
+  {
+    $$ = $1;
+    ctx->z = $$;
+  }
+;
+
+almost_zeit:
   date
-  {
-    $$ = $1;
-    ctx->z = $$;
-  }
 | range
-  {
-    $$ = $1;
-    ctx->z = $$;
-  }
 | floruit
-  {
-    $$ = $1;
-    ctx->z = $$;
-  }
 ;
 
 floruit:
@@ -405,7 +317,7 @@ extern "C" {
     );
   }
 
-  unsigned int key_zeit(const zeit* z) {
+  uint64_t key_zeit(const zeit* z) {
     return key(*z);
   }
 }

@@ -58,7 +58,7 @@ compare.restype = ctypes.c_int
 
 key = lib.key_zeit
 key.argtypes = [ ctypes.POINTER(Zeit) ]
-key.restype = ctypes.c_uint
+key.restype = ctypes.c_uint64
 
 
 def date_skey(d):
