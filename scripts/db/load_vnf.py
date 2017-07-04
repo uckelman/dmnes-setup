@@ -33,6 +33,8 @@ LANG_SKEY = {
   'Old Danish'            : 'Danish 0',
   'Middle Danish'         : 'Danish 1',
   'Danish'                : 'Danish 3',
+  'Middle Dutch'          : 'Dutch 0',
+  'Dutch'                 : 'Dutch 1',
   'Old English'           : 'English 0',
   'Middle English'        : 'English 1',
   'Early Modern English'  : 'English 2',
