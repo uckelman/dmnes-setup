@@ -6,6 +6,6 @@ import sys
 chars = set(c for c in sys.stdin.read().strip())
 
 for f in sys.argv[1:]:
-    chars -= set(unichr(c.unicode) for c in fontforge.open(f).glyphs() if c.unicode != -1)
+    chars -= set(chr(c.unicode) for c in fontforge.open(f).glyphs() if c.unicode != -1)
 
 print(''.join(sorted(chars)), end='')
