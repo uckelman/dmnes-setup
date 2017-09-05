@@ -17,6 +17,7 @@ def make_cnf_row(cnf):
     str_inner(cnf.etym),
     paragraphize(str_inner(cnf.usg)) if hasattr(cnf, 'usg') else None,
     paragraphize(str_inner(cnf['def'])) if hasattr(cnf, 'def') else None,
+    paragraphize(str_inner(cnf['lit'])) if hasattr(cnf, 'lit') else None,
     1 if cnf.meta.live else 0
   )
 
@@ -24,7 +25,7 @@ def make_cnf_row(cnf):
 def insert_cnf(dbh, cnf):
   cnf_r = make_cnf_row(cnf)
   dbh.execute(
-    "INSERT INTO cnf (nym, gen, etym, usg, def, live) VALUES (?,?,?,?,?,?)",
+    "INSERT INTO cnf (nym, gen, etym, usg, def, lit, live) VALUES (?,?,?,?,?,?,?)",
     cnf_r
   )
   return dbh.lastrowid

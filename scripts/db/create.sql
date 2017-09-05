@@ -8,6 +8,7 @@ CREATE TABLE cnf(
   etym TEXT,
   usg TEXT,
   def TEXT,
+  lit TEXT,
   live INTEGER NOT NULL
 );
 
