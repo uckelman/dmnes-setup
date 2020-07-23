@@ -74,11 +74,12 @@ def insert_notes(dbh, table, ref, obj):
 
 # normalize author names coming from git
 AUTHORS_NORM = {
-  'G. Grim'      : 'Genny Grim',
-  'mariannsliz'  : 'Mariann Slíz',
-  'Mariann Sliz' : 'Mariann Slíz',
-  'Sara Uckelman': 'Sara L. Uckelman',
-  'julpepe'      : 'Juliet Pepe'
+  'G. Grim'       : 'Genny Grim',
+  'mariannsliz'   : 'Mariann Slíz',
+  'Mariann Sliz'  : 'Mariann Slíz',
+  'Sara Uckelman' : 'Sara L. Uckelman',
+  'julpepe'       : 'Juliet Pepe',
+  'adeliajbrown'  : 'Adelia J. Brown'
 }
 
 AUTHORS_SKEY = {
