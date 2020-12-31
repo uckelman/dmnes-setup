@@ -79,7 +79,8 @@ AUTHORS_NORM = {
   'Mariann Sliz'  : 'Mariann Slíz',
   'Sara Uckelman' : 'Sara L. Uckelman',
   'julpepe'       : 'Juliet Pepe',
-  'adeliajbrown'  : 'Adelia J. Brown'
+  'adeliajbrown'  : 'A. Brown',
+  'Adelia Brown'  : 'A. Brown'
 }
 
 AUTHORS_SKEY = {
